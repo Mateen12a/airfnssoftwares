@@ -304,6 +304,15 @@
   backdrop-filter: blur(12px);
 }
 
+/* Nav solid — used when the mobile menu is open. Fully opaque so the menu
+   below it never bleeds through and never picks up backdrop-filter artefacts
+   from a scrolled page. */
+.nav-solid {
+  background-color: #0A0A0A;
+  border-bottom: 1px solid #1F1F1F;
+  backdrop-filter: none;
+}
+
 /* Textarea autogrow */
 textarea {
   resize: vertical;

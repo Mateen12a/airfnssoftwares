@@ -22,7 +22,7 @@ const workProjects: WorkProject[] = [
     airFnsRole: "AirFns Softwares architected and shipped mywellbeingtoday end-to-end, from product strategy and information architecture through to the full-stack build, AI tooling and provider onboarding. The platform was designed from day one to scale across both individual and organisational use, with a privacy-first foundation appropriate for the health and social care sector.",
     url: "https://mywellbeingtoday.com",
     logo: "/assets/mywellbeingtoday-logo.png",
-    logoBg: "#F1F5F9",
+    logoBg: "#FFFFFF",
     accent: "#7DA9C9",
     tags: ["Digital Health", "Wellbeing", "AI", "Multi-tenant", "UK"],
   },
@@ -45,6 +45,46 @@ const workProjects: WorkProject[] = [
     logoBg: "#FFFFFF",
     accent: "#F97316",
     tags: ["Marketplace", "Global Health", "Two-sided", "Cross-border"],
+  },
+  {
+    id: "globalhealthjobs",
+    name: "Global Health Jobs",
+    tagline: "A specialist work resource for special people",
+    shortDescription: "The dedicated jobs board for global health. The best roles in the sector, finally in one place, matched with the people who can fill them.",
+    detailedDescription: "Global Health Jobs is a specialist careers platform for the global health sector. The product brings together employers, recruiters and global health professionals around a focused jobs board, with employer profiles, structured job listings, candidate accounts and applicant workflows. It is built around a single thesis: the best jobs in global health should not be scattered across generic boards, they should live in one place where the right people can find them.",
+    features: [
+      "Specialist global health jobs board",
+      "Employer accounts and company profiles",
+      "Structured job posting and applicant flows",
+      "Candidate profiles and saved searches",
+      "Designed for the global health labour market",
+    ],
+    airFnsRole: "AirFns Softwares contributed the engineering and platform work that keeps Global Health Jobs running as a sector-specific marketplace, including job posting workflows, employer/candidate account flows and the integrations that hold the listings, applications and notifications together.",
+    url: "https://globalhealthjobs.com",
+    logo: "/assets/ghj-logo.png",
+    logoBg: "#FFFFFF",
+    accent: "#3B82F6",
+    tags: ["Jobs Board", "Global Health", "Recruitment", "Marketplace"],
+  },
+  {
+    id: "esave",
+    name: "E-save",
+    tagline: "Repurposing old electronics, reducing e-waste",
+    shortDescription: "A platform for repurposing old electronics to reduce electronic waste and improve community health, with secure data handling and traceable device flow.",
+    detailedDescription: "E-save tackles a quiet but growing public-health problem: electronic waste. The platform gives individuals and organisations a structured way to retire, donate and repurpose old electronics so devices stop being dumped and start being reused. The system tracks devices through their second life, with the operational tooling needed to keep an e-waste programme honest and auditable, and is designed for community-scale rollout.",
+    features: [
+      "Device intake and lifecycle tracking",
+      "Repurposing and donation workflows",
+      "Community and organisation accounts",
+      "Built around environmental and public-health outcomes",
+      "Auditable, traceable device flow",
+    ],
+    airFnsRole: "AirFns Softwares built E-save end-to-end, from the device-tracking model and intake flows to the public-facing site and operational dashboards. The product was engineered to be lightweight enough to deploy at the community level while staying rigorous about chain-of-custody for each device.",
+    url: "https://e-save.org.uk",
+    logo: "/assets/esave-logo.png",
+    logoBg: "#FFFFFF",
+    accent: "#22C55E",
+    tags: ["E-waste", "Sustainability", "Community Health", "UK"],
   },
 ];
 
@@ -136,30 +176,76 @@ export default function WorkAndProducts() {
                     data-testid={`work-card-${project.id}`}
                     className="group block bg-[#111111] border border-[#1F1F1F] card-hover-glow transition-colors duration-300 cursor-pointer focus:outline-none focus:border-[#E53E3E]/50 focus:shadow-[0_0_0_2px_rgba(229,62,62,0.25)]"
                   >
-                    {/* Logo banner with accent gradient under */}
+                    {/* Logo banner — unified white canvas, with a subtle
+                        brand-coloured wash behind the logo and a glowing
+                        accent line at the bottom that "bleeds" the brand
+                        colour into the card body below. */}
                     <div
                       className="h-40 border-b border-[#1F1F1F] flex items-center justify-center overflow-hidden relative"
                       style={{ background: project.logoBg }}
                     >
+                      {/* Top hairline — full brand colour, faint by default,
+                          full strength on hover. Reads as a brand ribbon. */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-x-0 top-0 h-px opacity-40 group-hover:opacity-100 transition-opacity duration-500"
+                        style={{ background: project.accent }}
+                      />
+
+                      {/* Soft radial wash from the bottom in the brand colour.
+                          Subtle on white but lifts the whole banner out of
+                          flatness, and intensifies on hover. */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 pointer-events-none opacity-70 group-hover:opacity-100 transition-opacity duration-500"
+                        style={{
+                          background: `radial-gradient(120% 70% at 50% 110%, ${project.accent}26 0%, ${project.accent}10 35%, transparent 65%)`,
+                        }}
+                      />
+
+                      {/* Soft side vignette in brand colour, gives the white
+                          banner a tinted, alive feel. */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 pointer-events-none opacity-40 group-hover:opacity-70 transition-opacity duration-500"
+                        style={{
+                          background: `linear-gradient(90deg, ${project.accent}1A 0%, transparent 18%, transparent 82%, ${project.accent}1A 100%)`,
+                        }}
+                      />
+
                       <img
                         src={project.logo}
                         alt={`${project.name} logo`}
-                        className="max-h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-[1.04]"
+                        className="relative max-h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-[1.04]"
                         style={{ transform: "translateZ(30px)" }}
                         draggable={false}
                       />
+
+                      {/* Glowing brand-colour bottom line. The shadow projects
+                          the colour down into the body section so the white
+                          banner and the dark body feel connected. */}
                       <div
                         aria-hidden="true"
-                        className="absolute inset-x-0 bottom-0 h-px"
-                        style={{ background: `linear-gradient(90deg, transparent, ${project.accent}, transparent)` }}
+                        className="absolute inset-x-0 bottom-0 h-[2px]"
+                        style={{
+                          background: `linear-gradient(90deg, transparent 0%, ${project.accent}99 18%, ${project.accent} 50%, ${project.accent}99 82%, transparent 100%)`,
+                          boxShadow: `0 0 14px ${project.accent}80, 0 6px 22px ${project.accent}40`,
+                        }}
                       />
+
                       {/* Open-detail badge */}
                       <div
                         className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         style={{ transform: "translateZ(50px)" }}
                       >
                         <div className="px-2.5 py-1 rounded-full bg-[#0A0A0A]/85 border border-[#2A2A2A] backdrop-blur-sm flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#E53E3E] animate-pulse" />
+                          <span
+                            className="w-1.5 h-1.5 rounded-full animate-pulse"
+                            style={{
+                              background: project.accent,
+                              boxShadow: `0 0 8px ${project.accent}`,
+                            }}
+                          />
                           <span className="text-white text-[10px] font-mono tracking-wider uppercase">
                             View details
                           </span>

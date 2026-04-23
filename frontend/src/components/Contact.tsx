@@ -169,52 +169,153 @@ export default function Contact() {
       setEnhanceError("Write at least a few words first.");
       return;
     }
-    setEnhancing(true);
-    setEnhanceError(null);
-    setShowEnhanceOptions(false);
-    const saved = form.message;
-
-    const { status, data, offline, timedOut } = await postJson<{
-      enhanced?: string;
-      subject?: string;
-      error?: string;
-    }>("/api/ai-enhance", { message: form.message });
-
-    setEnhancing(false);
-
-    if (offline) {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
       setEnhanceError("You appear to be offline. Your message is ready to send when you're back.");
       return;
     }
-    if (timedOut) {
-      setEnhanceError("AI took too long to respond. Send your message as written.");
-      return;
-    }
-    if (status === 429) {
-      setEnhanceError(data?.error ?? "AI is busy right now. Send your message as written.");
-      return;
-    }
-    if (status === 503) {
-      setEnhanceError(data?.error ?? "AI is unavailable. Your message is fine to send as-is.");
-      return;
-    }
-    if (status >= 400 || !data?.enhanced) {
-      setEnhanceError(data?.error ?? "Could not enhance right now. Your message is ready to send as-is.");
-      return;
-    }
 
-    setOriginalMessage(saved);
-    setOriginalSubject(form.subject);
-    setForm((prev) => ({
-      ...prev,
-      message: data.enhanced!,
-      subject: data.subject && data.subject.length > 0 ? data.subject : prev.subject,
-    }));
-    if (data.subject) {
-      setErrors((prev) => ({ ...prev, subject: undefined }));
-      setTouched((prev) => ({ ...prev, subject: true }));
+    setEnhancing(true);
+    setEnhanceError(null);
+    setShowEnhanceOptions(false);
+
+    const savedMessage = form.message;
+    const savedSubject = form.subject;
+
+    // Try streaming first — text appears as the AI generates it, so the user
+    // sees progress instantly instead of waiting on a spinner.
+    const controller = new AbortController();
+    const overallTimer = setTimeout(() => controller.abort(), 30000);
+
+    let firstByteTimer: ReturnType<typeof setTimeout> | null = setTimeout(
+      () => controller.abort(),
+      12000
+    );
+
+    try {
+      const res = await fetch(apiUrl("/api/ai-enhance/stream"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: savedMessage }),
+        signal: controller.signal,
+      });
+
+      if (!res.ok || !res.body) {
+        // Server rejected before streaming started — try to parse JSON error.
+        let errMsg = "Could not enhance right now. Your message is ready to send as-is.";
+        try {
+          const j = (await res.json()) as { error?: string };
+          if (j?.error) errMsg = j.error;
+        } catch {
+          /* ignore */
+        }
+        if (res.status === 429) {
+          setEnhanceError(errMsg);
+        } else if (res.status === 503) {
+          setEnhanceError(errMsg);
+        } else {
+          setEnhanceError(errMsg);
+        }
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let buffer = "";
+
+      // Wipe the current message so streamed text replaces it cleanly.
+      let bodyStarted = false;
+      let bodyText = "";
+      let receivedSubject = "";
+      let sawAny = false;
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        if (firstByteTimer) {
+          clearTimeout(firstByteTimer);
+          firstByteTimer = null;
+          // Hide the full-overlay spinner once data starts flowing — the
+          // textarea itself will show progress.
+          setEnhancing(false);
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+        let nl: number;
+        while ((nl = buffer.indexOf("\n")) !== -1) {
+          const line = buffer.slice(0, nl).trim();
+          buffer = buffer.slice(nl + 1);
+          if (!line) continue;
+          let evt:
+            | { type: "subject"; data: string }
+            | { type: "chunk"; data: string }
+            | { type: "done" }
+            | { type: "error"; error: string }
+            | null = null;
+          try {
+            evt = JSON.parse(line);
+          } catch {
+            continue;
+          }
+          if (!evt) continue;
+          sawAny = true;
+
+          if (evt.type === "subject") {
+            receivedSubject = evt.data;
+            setForm((prev) => ({ ...prev, subject: evt!.data as string }));
+            setErrors((prev) => ({ ...prev, subject: undefined }));
+            setTouched((prev) => ({ ...prev, subject: true }));
+          } else if (evt.type === "chunk") {
+            if (!bodyStarted) {
+              bodyText = evt.data;
+              bodyStarted = true;
+              setForm((prev) => ({ ...prev, message: bodyText }));
+            } else {
+              bodyText += evt.data;
+              setForm((prev) => ({ ...prev, message: bodyText }));
+            }
+          } else if (evt.type === "error") {
+            setEnhanceError(evt.error);
+            // Restore the user's text — we don't want to leave a half-baked
+            // body behind.
+            setForm((prev) => ({
+              ...prev,
+              message: savedMessage,
+              subject: savedSubject,
+            }));
+            return;
+          } else if (evt.type === "done") {
+            // graceful end
+          }
+        }
+      }
+
+      if (!sawAny || !bodyText.trim()) {
+        setEnhanceError("AI returned nothing. Send your message as written.");
+        setForm((prev) => ({ ...prev, message: savedMessage, subject: savedSubject }));
+        return;
+      }
+
+      setOriginalMessage(savedMessage);
+      setOriginalSubject(savedSubject);
+      // Snap final subject in case it arrived after we cleared form.
+      if (receivedSubject) {
+        setForm((prev) => ({ ...prev, subject: receivedSubject }));
+      }
+      setShowEnhanceOptions(true);
+    } catch (err) {
+      const aborted = (err as Error)?.name === "AbortError";
+      if (aborted) {
+        setEnhanceError("AI took too long to respond. Send your message as written.");
+      } else {
+        setEnhanceError("Could not reach the AI right now. Your message is ready to send as-is.");
+      }
+      setForm((prev) => ({ ...prev, message: savedMessage, subject: savedSubject }));
+    } finally {
+      clearTimeout(overallTimer);
+      if (firstByteTimer) clearTimeout(firstByteTimer);
+      setEnhancing(false);
     }
-    setShowEnhanceOptions(true);
   }
 
   function useEnhanced() {

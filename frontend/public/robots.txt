@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Don't waste crawl budget on the API.
+Disallow: /api/
+
+Sitemap: https://airfnssoftwares.com/sitemap.xml

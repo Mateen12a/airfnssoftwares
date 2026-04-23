@@ -48789,6 +48789,8 @@ var router3 = (0, import_express3.Router)();
 var enhanceSchema = external_exports.object({
   message: external_exports.string().min(10, "Message too short to enhance").max(3e3, "Message too long").trim()
 });
+var SUBJECT_TAG = "[[SUBJECT]]";
+var MESSAGE_TAG = "[[MESSAGE]]";
 function looksLikeAbuse(message) {
   const urlMatches = message.match(/https?:\/\/|www\./gi) || [];
   if (urlMatches.length > 3) return "Too many links in message.";
@@ -48801,6 +48803,148 @@ function looksLikeAbuse(message) {
   }
   return null;
 }
+function buildPrompt(message) {
+  return `You are a professional communication assistant. The user wants to contact AirFns Softwares Ltd, a UK-registered AI and technology company. Take their raw message and produce two things:
+
+1. A concise, professional subject line (5 to 9 words, max 70 characters, plain text, no trailing punctuation, no quotes, no emojis).
+2. A clearer, well-structured rewrite of the message itself. Keep the original intent and tone fully intact. Do not invent facts, names, dates, prices, commitments or contact details. Do not add em dashes. The message must NOT include the subject as a heading or label inside it.
+
+Output format \u2014 exactly this, nothing else, no markdown, no preamble:
+
+${SUBJECT_TAG}<subject line on one line>
+${MESSAGE_TAG}
+<rewritten message body on the lines that follow>
+
+User message:
+${message}`;
+}
+function cleanSubject(s) {
+  return s.replace(/^["'`\s]+|["'`\s.!?:;,-]+$/g, "").slice(0, 70);
+}
+router3.post("/stream", async (req, res) => {
+  const parsed = enhanceSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({
+      error: "Validation failed",
+      details: parsed.error.flatten().fieldErrors
+    });
+    return;
+  }
+  const { message } = parsed.data;
+  const abuse = looksLikeAbuse(message);
+  if (abuse) {
+    res.status(400).json({ error: abuse });
+    return;
+  }
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    req.log.error("GEMINI_API_KEY not configured");
+    res.status(503).json({
+      error: "AI enhancement is temporarily unavailable. Your message can still be sent as written."
+    });
+    return;
+  }
+  res.status(200);
+  res.setHeader("Content-Type", "application/x-ndjson; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("X-Accel-Buffering", "no");
+  res.flushHeaders?.();
+  const send = (obj) => {
+    res.write(JSON.stringify(obj) + "\n");
+  };
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({
+      model: "gemini-flash-latest",
+      generationConfig: {
+        temperature: 0.5,
+        maxOutputTokens: 1024
+      }
+    });
+    const result = await model.generateContentStream(buildPrompt(message));
+    let buffer = "";
+    let subjectSent = false;
+    let bodyStarted = false;
+    let bodyTotal = "";
+    for await (const piece of result.stream) {
+      const text = piece.text();
+      if (!text) continue;
+      buffer += text;
+      if (!bodyStarted) {
+        const mIdx = buffer.indexOf(MESSAGE_TAG);
+        if (mIdx !== -1) {
+          if (!subjectSent) {
+            const head = buffer.slice(0, mIdx);
+            const sIdx = head.indexOf(SUBJECT_TAG);
+            const rawSubject = sIdx !== -1 ? head.slice(sIdx + SUBJECT_TAG.length) : head;
+            const subject = cleanSubject(rawSubject.split("\n")[0] ?? "");
+            if (subject) send({ type: "subject", data: subject });
+            subjectSent = true;
+          }
+          let body = buffer.slice(mIdx + MESSAGE_TAG.length);
+          if (body.startsWith("\n")) body = body.slice(1);
+          if (body.length > 0) {
+            send({ type: "chunk", data: body });
+            bodyTotal += body;
+          }
+          buffer = "";
+          bodyStarted = true;
+        }
+      } else {
+        send({ type: "chunk", data: text });
+        bodyTotal += text;
+      }
+    }
+    if (!bodyStarted) {
+      const sIdx = buffer.indexOf(SUBJECT_TAG);
+      let subject = "";
+      let body = buffer;
+      if (sIdx !== -1) {
+        const after = buffer.slice(sIdx + SUBJECT_TAG.length);
+        const nl = after.indexOf("\n");
+        if (nl !== -1) {
+          subject = cleanSubject(after.slice(0, nl));
+          body = after.slice(nl + 1);
+        } else {
+          subject = cleanSubject(after);
+          body = "";
+        }
+      }
+      if (subject && !subjectSent) send({ type: "subject", data: subject });
+      const trimmed = body.trim();
+      if (trimmed) {
+        send({ type: "chunk", data: trimmed });
+        bodyTotal += trimmed;
+      }
+    }
+    if (!bodyTotal.trim()) {
+      send({
+        type: "error",
+        error: "AI returned an empty response. Please send your message as written."
+      });
+      res.end();
+      return;
+    }
+    send({ type: "done" });
+    res.end();
+    req.log.info("AI enhancement (stream) completed");
+  } catch (err) {
+    const status = err?.status;
+    const msg = err?.message ?? "";
+    req.log.error({ err }, "AI enhance stream error");
+    let errorMsg = "AI enhancement could not run. Your message is ready to send as-is.";
+    if (status === 429 || /quota|rate/i.test(msg)) {
+      errorMsg = "AI enhancement is busy right now. Please send your message as written, or try again in a moment.";
+    } else if (status === 401 || status === 403) {
+      errorMsg = "AI enhancement is temporarily unavailable. Your message can still be sent as written.";
+    }
+    try {
+      send({ type: "error", error: errorMsg });
+      res.end();
+    } catch {
+    }
+  }
+});
 router3.post("/", async (req, res) => {
   const parsed = enhanceSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -48830,39 +48974,23 @@ router3.post("/", async (req, res) => {
       model: "gemini-flash-latest",
       generationConfig: {
         temperature: 0.5,
-        maxOutputTokens: 1024,
-        responseMimeType: "application/json"
+        maxOutputTokens: 1024
       }
     });
-    const systemPrompt = `You are a professional communication assistant. The user wants to contact AirFns Softwares Ltd, a UK-registered AI and technology company. Take their raw message and produce two things:
-
-1. "subject": a concise, professional subject line that captures the core ask (5 to 9 words, max 70 characters, plain text, no trailing punctuation, no quotes, no emojis).
-2. "message": a clearer, well-structured rewrite of the message itself. Keep the original intent and tone fully intact. Do not invent facts, names, dates, prices, commitments, or contact details. Do not add em dashes. The message must NOT include the subject as a heading or label inside it.
-
-Return strictly valid JSON of the shape: {"subject": "...", "message": "..."}. No preamble, no explanation, no markdown fences.`;
-    const result = await model.generateContent(
-      `${systemPrompt}
-
-User message:
-${message}`
-    );
-    const raw = result.response.text().trim();
-    let parsedOut = null;
-    try {
-      parsedOut = JSON.parse(raw);
-    } catch {
-      const m = raw.match(/\{[\s\S]*\}/);
-      if (m) {
-        try {
-          parsedOut = JSON.parse(m[0]);
-        } catch {
-          parsedOut = null;
-        }
-      }
+    const result = await model.generateContent(buildPrompt(message));
+    const raw = result.response.text();
+    const sIdx = raw.indexOf(SUBJECT_TAG);
+    const mIdx = raw.indexOf(MESSAGE_TAG);
+    let enhancedSubject = "";
+    let enhancedMessage = "";
+    if (sIdx !== -1 && mIdx !== -1 && mIdx > sIdx) {
+      enhancedSubject = cleanSubject(
+        raw.slice(sIdx + SUBJECT_TAG.length, mIdx).split("\n")[0] ?? ""
+      );
+      enhancedMessage = raw.slice(mIdx + MESSAGE_TAG.length).trim();
+    } else {
+      enhancedMessage = raw.trim();
     }
-    const enhancedMessage = typeof parsedOut?.message === "string" ? parsedOut.message.trim() : "";
-    let enhancedSubject = typeof parsedOut?.subject === "string" ? parsedOut.subject.trim() : "";
-    enhancedSubject = enhancedSubject.replace(/^["'`\s]+|["'`\s.!?:;,-]+$/g, "").slice(0, 70);
     if (!enhancedMessage) {
       res.status(502).json({
         error: "AI returned an empty response. Please send your message as written."
@@ -48870,7 +48998,10 @@ ${message}`
       return;
     }
     req.log.info("AI enhancement completed");
-    res.json({ enhanced: enhancedMessage, subject: enhancedSubject || void 0 });
+    res.json({
+      enhanced: enhancedMessage,
+      subject: enhancedSubject || void 0
+    });
   } catch (err) {
     const status = err?.status;
     const message2 = err?.message ?? "";

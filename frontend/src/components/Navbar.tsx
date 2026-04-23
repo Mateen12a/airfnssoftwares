@@ -67,14 +67,14 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "nav-scrolled" : "bg-transparent"
+        menuOpen ? "nav-solid" : scrolled ? "nav-scrolled" : "bg-transparent"
       }`}
     >
       {/* Hairline gradient divider — only shows when scrolled */}
       <div
         aria-hidden="true"
         className={`absolute inset-x-0 bottom-0 h-px transition-opacity duration-500 ${
-          scrolled ? "opacity-100" : "opacity-0"
+          scrolled || menuOpen ? "opacity-100" : "opacity-0"
         }`}
         style={{
           background:
