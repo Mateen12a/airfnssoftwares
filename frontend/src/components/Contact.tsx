@@ -181,14 +181,58 @@ export default function Contact() {
     const savedMessage = form.message;
     const savedSubject = form.subject;
 
+    // Non-streaming fallback. Used if the streaming endpoint times out, fails,
+    // or returns nothing — common on flaky mobile networks and after a cold
+    // start on the backend's hosting platform.
+    async function runFallback(): Promise<boolean> {
+      const { status, data, offline, timedOut } = await postJson<{
+        enhanced?: string;
+        subject?: string;
+        error?: string;
+      }>("/api/ai-enhance", { message: savedMessage }, 60000);
+
+      if (offline) {
+        setEnhanceError("You appear to be offline. Your message is ready to send when you're back.");
+        return false;
+      }
+      if (timedOut) {
+        setEnhanceError("AI took too long to respond. Send your message as written.");
+        return false;
+      }
+      if (status === 429 || status === 503) {
+        setEnhanceError(data?.error ?? "AI is busy right now. Please send your message as written.");
+        return false;
+      }
+      if (status >= 400 || !data?.enhanced) {
+        setEnhanceError(data?.error ?? "AI enhancement could not run. Your message is ready to send as-is.");
+        return false;
+      }
+
+      setOriginalMessage(savedMessage);
+      setOriginalSubject(savedSubject);
+      setForm((prev) => ({
+        ...prev,
+        message: data.enhanced!,
+        subject: data.subject || prev.subject,
+      }));
+      if (data.subject) {
+        setErrors((prev) => ({ ...prev, subject: undefined }));
+        setTouched((prev) => ({ ...prev, subject: true }));
+      }
+      setShowEnhanceOptions(true);
+      return true;
+    }
+
     // Try streaming first — text appears as the AI generates it, so the user
-    // sees progress instantly instead of waiting on a spinner.
+    // sees progress instantly instead of waiting on a spinner. We give the
+    // server up to 35s to send its first non-ping byte (covers cold starts on
+    // the hosting platform plus slow mobile carriers) and 75s overall.
     const controller = new AbortController();
-    const overallTimer = setTimeout(() => controller.abort(), 30000);
+    const overallTimer = setTimeout(() => controller.abort(), 75000);
 
     let firstByteTimer: ReturnType<typeof setTimeout> | null = setTimeout(
       () => controller.abort(),
-      12000
+      35000
     );
 
     try {
@@ -232,12 +276,13 @@ export default function Contact() {
         const { value, done } = await reader.read();
         if (done) break;
 
+        // The very first byte of any kind (including a "ping") proves the
+        // server is alive and the network is flowing — clear the first-byte
+        // timer immediately. We only flip the spinner off when real content
+        // (subject/chunk) starts arriving.
         if (firstByteTimer) {
           clearTimeout(firstByteTimer);
           firstByteTimer = null;
-          // Hide the full-overlay spinner once data starts flowing — the
-          // textarea itself will show progress.
-          setEnhancing(false);
         }
 
         buffer += decoder.decode(value, { stream: true });
@@ -247,6 +292,7 @@ export default function Contact() {
           buffer = buffer.slice(nl + 1);
           if (!line) continue;
           let evt:
+            | { type: "ping" }
             | { type: "subject"; data: string }
             | { type: "chunk"; data: string }
             | { type: "done" }
@@ -258,7 +304,14 @@ export default function Contact() {
             continue;
           }
           if (!evt) continue;
+
+          // Heartbeats only keep the connection alive; nothing user-visible.
+          if (evt.type === "ping") continue;
+
           sawAny = true;
+          // Hide the full-overlay spinner once real content starts flowing —
+          // the textarea itself will show streaming progress.
+          if (enhancing) setEnhancing(false);
 
           if (evt.type === "subject") {
             receivedSubject = evt.data;
@@ -291,8 +344,11 @@ export default function Contact() {
       }
 
       if (!sawAny || !bodyText.trim()) {
-        setEnhanceError("AI returned nothing. Send your message as written.");
+        // Stream produced no usable content. Quietly fall back to the
+        // non-streaming endpoint before surfacing an error to the user.
         setForm((prev) => ({ ...prev, message: savedMessage, subject: savedSubject }));
+        setEnhancing(true);
+        await runFallback();
         return;
       }
 
@@ -304,13 +360,17 @@ export default function Contact() {
       }
       setShowEnhanceOptions(true);
     } catch (err) {
-      const aborted = (err as Error)?.name === "AbortError";
-      if (aborted) {
-        setEnhanceError("AI took too long to respond. Send your message as written.");
-      } else {
-        setEnhanceError("Could not reach the AI right now. Your message is ready to send as-is.");
-      }
+      // Streaming failed. Restore the user's text and try the non-streaming
+      // endpoint as a silent fallback before showing any error message —
+      // mobile networks and cold starts often kill the stream but a plain
+      // POST will still complete.
       setForm((prev) => ({ ...prev, message: savedMessage, subject: savedSubject }));
+      const aborted = (err as Error)?.name === "AbortError";
+      setEnhancing(true);
+      const ok = await runFallback();
+      if (!ok && aborted) {
+        // runFallback already set an error message; keep it.
+      }
     } finally {
       clearTimeout(overallTimer);
       if (firstByteTimer) clearTimeout(firstByteTimer);

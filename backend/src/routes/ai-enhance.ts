@@ -105,6 +105,26 @@ router.post("/stream", async (req: Request, res: Response) => {
     res.write(JSON.stringify(obj) + "\n");
   };
 
+  // Immediate heartbeat. Two reasons:
+  //  1. On Render's free tier the worker may have just woken from sleep, and
+  //     mobile carriers / CDNs may buffer the response body until the first
+  //     few hundred bytes arrive. Sending a ping right now proves the
+  //     connection is alive and stops the client from tripping its
+  //     "first byte" timeout while we wait for Gemini to start producing.
+  //  2. Some mobile proxies hold a streaming body until something flushes —
+  //     this primes the pipe.
+  send({ type: "ping" });
+
+  // Keep-alive ping every 5s while we wait for Gemini, so middleware doesn't
+  // close an "idle" connection on slow mobile links.
+  const keepAlive = setInterval(() => {
+    try {
+      send({ type: "ping" });
+    } catch {
+      /* socket gone, will be cleaned up below */
+    }
+  }, 5000);
+
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
@@ -188,6 +208,7 @@ router.post("/stream", async (req: Request, res: Response) => {
     }
 
     if (!bodyTotal.trim()) {
+      clearInterval(keepAlive);
       send({
         type: "error",
         error: "AI returned an empty response. Please send your message as written.",
@@ -196,10 +217,12 @@ router.post("/stream", async (req: Request, res: Response) => {
       return;
     }
 
+    clearInterval(keepAlive);
     send({ type: "done" });
     res.end();
     req.log.info("AI enhancement (stream) completed");
   } catch (err) {
+    clearInterval(keepAlive);
     const status = (err as { status?: number })?.status;
     const msg = (err as { message?: string })?.message ?? "";
     req.log.error({ err }, "AI enhance stream error");

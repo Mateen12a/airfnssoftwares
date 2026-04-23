@@ -48852,6 +48852,13 @@ router3.post("/stream", async (req, res) => {
   const send = (obj) => {
     res.write(JSON.stringify(obj) + "\n");
   };
+  send({ type: "ping" });
+  const keepAlive = setInterval(() => {
+    try {
+      send({ type: "ping" });
+    } catch {
+    }
+  }, 5e3);
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
@@ -48918,6 +48925,7 @@ router3.post("/stream", async (req, res) => {
       }
     }
     if (!bodyTotal.trim()) {
+      clearInterval(keepAlive);
       send({
         type: "error",
         error: "AI returned an empty response. Please send your message as written."
@@ -48925,10 +48933,12 @@ router3.post("/stream", async (req, res) => {
       res.end();
       return;
     }
+    clearInterval(keepAlive);
     send({ type: "done" });
     res.end();
     req.log.info("AI enhancement (stream) completed");
   } catch (err) {
+    clearInterval(keepAlive);
     const status = err?.status;
     const msg = err?.message ?? "";
     req.log.error({ err }, "AI enhance stream error");
