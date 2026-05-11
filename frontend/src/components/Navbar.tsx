@@ -208,7 +208,7 @@ export default function Navbar() {
             </ul>
             <div className="mt-16 flex items-center gap-2 text-[10px] font-mono text-[#6B7280] tracking-[0.2em] uppercase">
               <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" />
-              Building · Nigeria · Global
+              Online · Building
             </div>
           </motion.div>
         )}

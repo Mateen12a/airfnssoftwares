@@ -68,7 +68,7 @@ export default function Footer() {
             </p>
           </div>
           <p className="text-[#4B5563] text-[10px] font-mono tracking-wider">
-            RC&nbsp;·&nbsp;6991159&nbsp;·&nbsp;CAC Nigeria
+            Reg.&nbsp;No.&nbsp;6991159
           </p>
         </div>
       </div>

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const stats = [
   { num: "01", label: "Founded 2023", sub: "Built quietly. Shipping consistently. Compounding fast." },
-  { num: "02", label: "Global Reach", sub: "Nigeria-registered, globally operational. We work across borders." },
+  { num: "02", label: "Global Reach", sub: "Globally operational. We work across borders, time zones and industries." },
   { num: "03", label: "AI-Native", sub: "Intelligence is not a feature. It is the foundation." },
   { num: "04", label: "0 to Deployed", sub: "From whiteboard to live system, without cutting corners." },
 ];
@@ -63,7 +63,7 @@ export default function WhyAirFns() {
                 style={{ background: "linear-gradient(to bottom, #E53E3E, transparent)" }}
               />
               <p className="text-[#9CA3AF] text-lg leading-relaxed pl-4">
-                AirFns Softwares is not a typical agency. We are builders. A Nigeria-registered, globally operational team building systems at the intersection of artificial intelligence, regulatory technology and human experience. Every product we ship is designed to last.
+                AirFns Softwares is not a typical agency. We are builders. A globally operational team building systems at the intersection of artificial intelligence, regulatory technology and human experience. Every product we ship is designed to last.
               </p>
             </div>
 
