@@ -5,7 +5,13 @@ import { createHash } from "crypto";
 
 const router = Router();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+function getResend(): Resend {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 /**
  * Schema for the public contact form.
@@ -170,7 +176,7 @@ router.post("/", async (req: Request, res: Response) => {
     const safeSubject = escapeHtml(subject);
     const safeMessage = escapeHtml(message);
 
-    const { error } = await resend.emails.send({
+    const { error } = await getResend().emails.send({
       from: `AirFns Softwares <${fromEmail}>`,
       to: [fromEmail],
       replyTo: email,

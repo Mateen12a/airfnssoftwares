@@ -89,7 +89,7 @@ export default function Hero() {
           transition={{ delay: 0.35, duration: 0.5, ease: "easeOut" }}
           className="text-base sm:text-lg md:text-xl text-[#9CA3AF] max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed"
         >
-          AirFns Softwares Ltd builds AI-powered platforms and digital infrastructure for organisations that want to move faster, smarter, and further.
+          AirFns Softwares builds AI-powered platforms and digital infrastructure for organisations that want to move faster, smarter, and further.
         </motion.p>
 
         <motion.div

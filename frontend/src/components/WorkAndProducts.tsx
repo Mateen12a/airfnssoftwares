@@ -24,7 +24,7 @@ const workProjects: WorkProject[] = [
     logo: "/assets/mywellbeingtoday-logo.png",
     logoBg: "#FFFFFF",
     accent: "#7DA9C9",
-    tags: ["Digital Health", "Wellbeing", "AI", "Multi-tenant", "UK"],
+    tags: ["Digital Health", "Wellbeing", "AI", "Multi-tenant"],
   },
   {
     id: "globalhealth",
@@ -84,7 +84,7 @@ const workProjects: WorkProject[] = [
     logo: "/assets/esave-logo.png",
     logoBg: "#FFFFFF",
     accent: "#22C55E",
-    tags: ["E-waste", "Sustainability", "Community Health", "UK"],
+    tags: ["E-waste", "Sustainability", "Community Health"],
   },
 ];
 
@@ -405,7 +405,7 @@ export default function WorkAndProducts() {
                           </svg>
                         </a>
                         <span className="text-[#6B7280] text-xs font-mono">
-                          Carbioo AI™. Trademarked in the United Kingdom
+                          Carbioo AI™
                         </span>
                       </div>
                     </div>

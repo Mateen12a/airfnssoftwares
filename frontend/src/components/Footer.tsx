@@ -58,12 +58,17 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-[#1F1F1F] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-          <p className="text-[#6B7280] text-xs font-mono">
-            © 2023–2026 AirFns Softwares Ltd. All rights reserved.
-          </p>
-          <p className="text-[#6B7280] text-xs font-mono">
-            Carbioo AI™. Trademarked in the United Kingdom
+        <div className="pt-8 border-t border-[#1F1F1F] flex flex-col gap-3">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <p className="text-[#6B7280] text-xs font-mono">
+              © 2023–2026 AirFns Softwares. All rights reserved.
+            </p>
+            <p className="text-[#6B7280] text-xs font-mono">
+              Carbioo AI™
+            </p>
+          </div>
+          <p className="text-[#4B5563] text-[10px] font-mono tracking-wider">
+            RC&nbsp;·&nbsp;6991159&nbsp;·&nbsp;CAC Nigeria
           </p>
         </div>
       </div>

@@ -39,7 +39,7 @@ export default function About() {
             Built different. On purpose.
           </h2>
           <p className="text-[#9CA3AF] text-lg leading-relaxed max-w-3xl">
-            AirFns Softwares Ltd was founded with one conviction: that the most important technology problems are the ones most organisations are not yet equipped to solve. We build at the frontier of AI, climate technology and digital infrastructure. Not because it is easy, but because it is where we can create lasting value.
+            AirFns Softwares was founded with one conviction: that the most important technology problems are the ones most organisations are not yet equipped to solve. We build at the frontier of AI, climate technology and digital infrastructure. Not because it is easy, but because it is where we can create lasting value.
           </p>
         </motion.div>
 
@@ -76,18 +76,19 @@ export default function About() {
           >
             <div className="bg-[#111111] border border-[#1F1F1F] p-8">
               <p className="text-[#9CA3AF] leading-relaxed text-base">
-                We are a lean, hybrid team operating across the United Kingdom and Nigeria, with a global outlook. We work across time zones, industries and disciplines, united by the belief that great software changes things.
+                We are a lean, globally operational team headquartered in Nigeria. We work across time zones, industries and disciplines, united by the belief that great software changes things.
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="flex-1 h-px bg-[#1F1F1F]" />
-              <div className="bg-[#111111] border border-[#E53E3E]/20 px-4 py-2">
-                <span className="font-mono text-[10px] text-[#FCA5A5] tracking-wider">
-                  Carbioo AI™. Trademarked in the United Kingdom
-                </span>
+            <div className="bg-[#111111] border border-[#1F1F1F] px-5 py-4 flex items-center justify-between">
+              <div>
+                <p className="text-[#4B5563] font-mono text-[10px] tracking-wider uppercase mb-1">RC Number</p>
+                <p className="text-[#9CA3AF] font-mono text-sm">6991159</p>
               </div>
-              <div className="flex-1 h-px bg-[#1F1F1F]" />
+              <div className="text-right">
+                <p className="text-[#4B5563] font-mono text-[10px] tracking-wider uppercase mb-1">Registered</p>
+                <p className="text-[#9CA3AF] font-mono text-xs">CAC Nigeria</p>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
