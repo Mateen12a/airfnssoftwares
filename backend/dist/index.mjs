@@ -48810,7 +48810,7 @@ function looksLikeAbuse(message) {
   return null;
 }
 function buildPrompt(message) {
-  return `You are a professional communication assistant. The user wants to contact AirFns Softwares Ltd, a UK-registered AI and technology company. Take their raw message and produce two things:
+  return `You are a professional communication assistant. The user wants to contact AirFns Softwares, a Nigeria-registered, globally operational AI and technology company. Take their raw message and produce two things:
 
 1. A concise, professional subject line (5 to 9 words, max 70 characters, plain text, no trailing punctuation, no quotes, no emojis).
 2. A clearer, well-structured rewrite of the message itself. Keep the original intent and tone fully intact. Do not invent facts, names, dates, prices, commitments or contact details. Do not add em dashes. The message must NOT include the subject as a heading or label inside it.

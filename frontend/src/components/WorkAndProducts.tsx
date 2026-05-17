@@ -92,11 +92,30 @@ const products = [
   {
     id: "carbioo",
     name: "Carbioo AI",
+    trademark: true,
     status: "In Development" as const,
     description:
       "An AI-powered carbon tracking and reduction platform for the maritime sector. Carbioo AI gives regulators, operators and policymakers the data infrastructure they need to measure, report and reduce emissions in line with international standards.",
     tags: ["AI", "Carbon Tech", "Maritime", "RegTech"],
-    featured: true,
+    url: "https://carbiooai.com",
+    urlLabel: "Visit preview site",
+    accent: "#22C55E",
+    logo: "/assets/carbioo-logo.png" as string | null,
+    logoBg: "#FFFFFF",
+  },
+  {
+    id: "matowatch",
+    name: "Matowatch",
+    trademark: false,
+    status: "Live" as const,
+    description:
+      "Real-time monitoring, smart logging, and actionable alerts for Node.js projects and live websites. Monitor uptime, track performance and spot issues before they reach your users — paste a URL and go.",
+    tags: ["Monitoring", "DevTools", "Real-time", "Logging"],
+    url: "https://matowatch.com",
+    urlLabel: "Visit site",
+    accent: "#10B981",
+    logo: "/assets/matowatch-logo.png" as string | null,
+    logoBg: "#0D1A14",
   },
 ];
 
@@ -118,29 +137,37 @@ export default function WorkAndProducts() {
             {activeTab === "work" ? "Client Projects" : "Our Products"}
           </p>
 
-          <div className="flex items-center gap-1 p-1 bg-[#111111] border border-[#1F1F1F] rounded-sm w-fit">
-            {(["work", "products"] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`relative px-5 py-2 text-sm font-medium capitalize transition-colors duration-200 rounded-sm ${
-                  activeTab === tab ? "text-white" : "text-[#6B7280] hover:text-[#9CA3AF]"
-                }`}
-                data-testid={`tab-${tab}`}
-                id={tab === "products" ? "products" : undefined}
-              >
-                {activeTab === tab && (
-                  <motion.div
-                    layoutId="tab-bg"
-                    className="absolute inset-0 bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm"
-                  />
-                )}
-                <span className="relative z-10 flex items-center gap-2">
-                  {tab === "work" ? "Work" : "Products"}
-                  {activeTab === tab && <span className="w-1.5 h-1.5 rounded-full bg-[#E53E3E]" />}
-                </span>
-              </button>
-            ))}
+          <div className="flex items-center gap-3">
+            {(["work", "products"] as const).map((tab) => {
+              const active = activeTab === tab;
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`relative flex items-center gap-2.5 px-5 py-2.5 text-sm font-medium border transition-all duration-200 cursor-pointer select-none ${
+                    active
+                      ? "bg-white text-[#0A0A0A] border-white"
+                      : "bg-transparent text-[#9CA3AF] border-[#2A2A2A] hover:border-[#4A4A4A] hover:text-white"
+                  }`}
+                  data-testid={`tab-${tab}`}
+                  id={tab === "products" ? "products" : undefined}
+                  aria-pressed={active}
+                >
+                  {tab === "work" ? (
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6">
+                      <rect x="1" y="3" width="11" height="9" rx="1" />
+                      <path d="M4 3V2a2 2 0 014 0v1" />
+                    </svg>
+                  ) : (
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6">
+                      <path d="M6.5 1L8.5 5l4.5.65-3.25 3.17.77 4.48L6.5 11.1l-4.02 2.2.77-4.48L0 5.65 4.5 5z" />
+                    </svg>
+                  )}
+                  {tab === "work" ? "Client Work" : "Products"}
+                  {active && <span className="w-1.5 h-1.5 rounded-full bg-[#E53E3E] flex-shrink-0" />}
+                </button>
+              );
+            })}
           </div>
         </motion.div>
 
@@ -298,120 +325,177 @@ export default function WorkAndProducts() {
               transition={{ duration: 0.35 }}
               className="space-y-6"
             >
-              {products.map((product, i) => (
-                <motion.article
-                  key={product.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  className="group relative bg-[#111111] border border-[#1F1F1F] card-hover-glow transition-all duration-300 overflow-hidden"
-                  data-testid={`product-card-${product.id}`}
-                >
-                  {/* Ambient green glow — Carbioo's brand hue */}
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -top-32 -right-20 w-80 h-80 rounded-full opacity-30 group-hover:opacity-50 transition-opacity duration-700"
-                    style={{
-                      background: "radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 60%)",
-                      filter: "blur(40px)",
-                    }}
-                  />
+              {products.map((product, i) => {
+                const isLive = product.status === "Live";
+                const statusColor = isLive ? "#10B981" : "#E53E3E";
+                const statusBg = isLive ? "rgba(16,185,129,0.08)" : "rgba(229,62,62,0.08)";
+                const statusBorder = isLive ? "rgba(16,185,129,0.3)" : "rgba(229,62,62,0.3)";
+                const statusText = isLive ? "#6EE7B7" : "#FCA5A5";
+                return (
+                  <motion.article
+                    key={product.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1, duration: 0.5 }}
+                    className="group relative bg-[#111111] border border-[#1F1F1F] card-hover-glow transition-all duration-300 overflow-hidden"
+                    data-testid={`product-card-${product.id}`}
+                  >
+                    {/* Ambient brand-coloured glow */}
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -top-32 -right-20 w-80 h-80 rounded-full opacity-25 group-hover:opacity-45 transition-opacity duration-700"
+                      style={{
+                        background: `radial-gradient(circle, ${product.accent}30 0%, transparent 60%)`,
+                        filter: "blur(40px)",
+                      }}
+                    />
 
-                  <div className="grid grid-cols-1 lg:grid-cols-3 relative">
-                    <div className="lg:col-span-1 bg-[#0D0D0D] border-b lg:border-b-0 lg:border-r border-[#1F1F1F] p-6 md:p-8 lg:p-10 flex flex-col items-start justify-between">
-                      <div className="w-full">
-                        <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#E53E3E] mb-4 flex items-center gap-2">
-                          <span className="w-6 h-px bg-[#E53E3E]" />
-                          Product 01
-                        </div>
-                        {/* Carbioo brand asset on its native white background */}
-                        <a
-                          href="https://carbiooai.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center bg-white rounded-md px-4 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.4)] hover:shadow-[0_10px_40px_rgba(34,197,94,0.25)] transition-shadow duration-300"
-                          aria-label="Visit Carbioo AI"
-                          data-testid="link-carbioo-logo"
-                        >
-                          <img
-                            src="/assets/carbioo-logo.png"
-                            alt="Carbioo AI"
-                            className="h-9 w-auto select-none"
-                            draggable={false}
-                          />
-                        </a>
-
-                        {/* Decorative leaf/sprout sprite */}
-                        <img
-                          src="/assets/carbioo-sprout.png"
-                          alt=""
-                          aria-hidden="true"
-                          className="absolute -bottom-6 -left-6 w-32 h-32 opacity-[0.06] pointer-events-none select-none"
-                          draggable={false}
-                          onError={(e) => ((e.currentTarget.style.display = "none"))}
-                        />
-                      </div>
-                      <span className="mt-6 inline-flex items-center gap-1.5 border border-[#E53E3E]/30 bg-[#E53E3E]/10 text-[#FCA5A5] font-mono text-[10px] tracking-wider uppercase px-3 py-1.5 relative z-10">
-                        <span className="w-1 h-1 rounded-full bg-[#E53E3E] inline-block animate-pulse" />
-                        {product.status}
-                      </span>
-                    </div>
-
-                    <div className="lg:col-span-2 p-6 md:p-8 flex flex-col justify-between relative z-10">
-                      <div>
-                        <h3 className="text-white text-2xl font-bold mb-3 tracking-tight">
-                          {product.name}
-                          <span className="text-[#6B7280] text-xs font-mono align-top ml-2">™</span>
-                        </h3>
-                        <p className="text-[#9CA3AF] leading-relaxed mb-6">{product.description}</p>
-                        <div className="flex flex-wrap gap-2 mb-8">
-                          {product.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="font-mono text-[10px] text-[#9CA3AF] border border-[#2A2A2A] px-2.5 py-1 tracking-wider uppercase"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-4">
-                        <div className="relative group/btn">
-                          <button
-                            disabled
-                            title="Coming soon"
-                            className="cursor-not-allowed inline-flex items-center gap-2 bg-[#1A1A1A] border border-[#2A2A2A] text-[#6B7280] text-sm px-5 py-2.5 font-medium"
-                            data-testid="product-coming-soon-carbioo"
-                          >
-                            Coming Soon
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
-                              <path d="M6 1v10M1 6l5-5 5 5" />
-                            </svg>
-                          </button>
-                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-[#161616] border border-[#2A2A2A] text-[#9CA3AF] text-xs whitespace-nowrap opacity-0 group-hover/btn:opacity-100 transition-opacity pointer-events-none font-mono">
-                            Coming soon
+                    <div className="grid grid-cols-1 lg:grid-cols-3 relative">
+                      {/* Left panel — logo + status */}
+                      <div className="lg:col-span-1 bg-[#0D0D0D] border-b lg:border-b-0 lg:border-r border-[#1F1F1F] p-6 md:p-8 lg:p-10 flex flex-col items-start justify-between">
+                        <div className="w-full">
+                          <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#E53E3E] mb-4 flex items-center gap-2">
+                            <span className="w-6 h-px bg-[#E53E3E]" />
+                            Product 0{i + 1}
                           </div>
+
+                          {product.logo ? (
+                            <a
+                              href={product.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center rounded-md px-4 py-3 transition-shadow duration-300"
+                              style={{
+                                background: product.logoBg,
+                                boxShadow: "0 8px 30px rgba(0,0,0,0.4)",
+                              }}
+                              aria-label={`Visit ${product.name}`}
+                              data-testid={`link-${product.id}-logo`}
+                            >
+                              <img
+                                src={product.logo}
+                                alt={product.name}
+                                className="h-9 w-auto select-none"
+                                draggable={false}
+                              />
+                            </a>
+                          ) : (
+                            <a
+                              href={product.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2.5 rounded-md px-4 py-3 border transition-all duration-300"
+                              style={{
+                                background: `${product.accent}12`,
+                                borderColor: `${product.accent}30`,
+                                boxShadow: `0 8px 30px rgba(0,0,0,0.4)`,
+                              }}
+                              aria-label={`Visit ${product.name}`}
+                              data-testid={`link-${product.id}-logo`}
+                            >
+                              <span
+                                className="w-2 h-2 rounded-full flex-shrink-0"
+                                style={{ background: product.accent, boxShadow: `0 0 8px ${product.accent}` }}
+                              />
+                              <span className="font-bold text-white text-base tracking-tight">{product.name}</span>
+                            </a>
+                          )}
+
+                          {product.id === "carbioo" && (
+                            <img
+                              src="/assets/carbioo-sprout.png"
+                              alt=""
+                              aria-hidden="true"
+                              className="absolute -bottom-6 -left-6 w-32 h-32 opacity-[0.06] pointer-events-none select-none"
+                              draggable={false}
+                              onError={(e) => ((e.currentTarget.style.display = "none"))}
+                            />
+                          )}
                         </div>
-                        <a
-                          href="https://carbiooai.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-[#9CA3AF] hover:text-white text-sm font-medium transition-colors"
-                          data-testid="link-carbioo-preview"
+
+                        <span
+                          className="mt-6 inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase px-3 py-1.5 relative z-10 border"
+                          style={{ background: statusBg, borderColor: statusBorder, color: statusText }}
                         >
-                          Visit preview site
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <path d="M2 10L10 2M10 2H5M10 2v5" />
-                          </svg>
-                        </a>
-                        <span className="text-[#6B7280] text-xs font-mono">
-                          Carbioo AI™
+                          <span
+                            className="w-1 h-1 rounded-full inline-block animate-pulse"
+                            style={{ background: statusColor }}
+                          />
+                          {product.status}
                         </span>
                       </div>
+
+                      {/* Right panel — description + actions */}
+                      <div className="lg:col-span-2 p-6 md:p-8 flex flex-col justify-between relative z-10">
+                        <div>
+                          <h3 className="text-white text-2xl font-bold mb-3 tracking-tight">
+                            {product.name}
+                            {product.trademark && (
+                              <span className="text-[#6B7280] text-xs font-mono align-top ml-2">™</span>
+                            )}
+                          </h3>
+                          <p className="text-[#9CA3AF] leading-relaxed mb-6">{product.description}</p>
+                          <div className="flex flex-wrap gap-2 mb-8">
+                            {product.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="font-mono text-[10px] text-[#9CA3AF] border border-[#2A2A2A] px-2.5 py-1 tracking-wider uppercase"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-4">
+                          {isLive ? (
+                            <a
+                              href={product.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 text-sm px-5 py-2.5 font-medium border transition-all duration-200 hover:border-white hover:text-white"
+                              style={{ borderColor: `${product.accent}60`, color: product.accent }}
+                              data-testid={`link-${product.id}-cta`}
+                            >
+                              {product.urlLabel}
+                              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                <path d="M2 10L10 2M10 2H5M10 2v5" />
+                              </svg>
+                            </a>
+                          ) : (
+                            <>
+                              <div className="relative group/btn">
+                                <button
+                                  disabled
+                                  className="cursor-not-allowed inline-flex items-center gap-2 bg-[#1A1A1A] border border-[#2A2A2A] text-[#6B7280] text-sm px-5 py-2.5 font-medium"
+                                  data-testid={`product-coming-soon-${product.id}`}
+                                >
+                                  Coming Soon
+                                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <path d="M6 1v10M1 6l5-5 5 5" />
+                                  </svg>
+                                </button>
+                              </div>
+                              <a
+                                href={product.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-[#9CA3AF] hover:text-white text-sm font-medium transition-colors"
+                                data-testid={`link-${product.id}-preview`}
+                              >
+                                {product.urlLabel}
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                  <path d="M2 10L10 2M10 2H5M10 2v5" />
+                                </svg>
+                              </a>
+                            </>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </motion.article>
-              ))}
+                  </motion.article>
+                );
+              })}
             </motion.div>
           )}
         </AnimatePresence>
