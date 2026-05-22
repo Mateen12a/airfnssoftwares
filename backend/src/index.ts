@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { connectDB } from "./db";
 
 const rawPort = process.env["PORT"];
 const port = rawPort ? Number(rawPort) : 8080;
@@ -7,6 +8,8 @@ const port = rawPort ? Number(rawPort) : 8080;
 if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
+
+connectDB().catch((err) => logger.error({ err }, "DB connect error"));
 
 app.listen(port, (err) => {
   if (err) {

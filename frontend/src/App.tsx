@@ -9,6 +9,8 @@ import WorkAndProducts from "./components/WorkAndProducts";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import DayaInvite from "./pages/DayaInvite";
+import DayaAdmin from "./pages/DayaAdmin";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,8 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/daya-motives" component={DayaInvite} />
+      <Route path="/daya-motives/admin" component={DayaAdmin} />
     </Switch>
   );
 }
