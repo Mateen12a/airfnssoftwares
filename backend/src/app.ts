@@ -4,6 +4,9 @@ import pinoHttp from "pino-http";
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
 
 const app: Express = express();
 
@@ -106,5 +109,18 @@ app.use("/api/contact", contactBurstLimiter, contactLimiter);
 app.use("/api/ai-enhance", aiLimiter);
 
 app.use("/api", router);
+
+// Serve built frontend in production
+const frontendDist = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../../frontend/dist/public"
+);
+
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(frontendDist, "index.html"));
+  });
+}
 
 export default app;

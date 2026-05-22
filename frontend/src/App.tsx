@@ -34,8 +34,8 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/daya-motives" component={DayaInvite} />
-      <Route path="/daya-motives/admin" component={DayaAdmin} />
+      <Route path="/daya-motive" component={DayaInvite} />
+      <Route path="/daya-motive/admin" component={DayaAdmin} />
     </Switch>
   );
 }
