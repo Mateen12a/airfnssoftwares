@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFDF5"/>
+      <stop offset="60%" style="stop-color:#FFF8EE"/>
+      <stop offset="100%" style="stop-color:#FFFCF0"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#92400E"/>
+      <stop offset="50%" style="stop-color:#D97706"/>
+      <stop offset="100%" style="stop-color:#F59E0B"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="50%" cy="0%" r="60%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:0.18"/>
+      <stop offset="100%" style="stop-color:#F59E0B;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="100%" cy="100%" r="50%">
+      <stop offset="0%" style="stop-color:#A855F7;stop-opacity:0.1"/>
+      <stop offset="100%" style="stop-color:#A855F7;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+
+  <!-- Subtle grid -->
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+    <path d="M 48 0 L 0 0 0 48" fill="none" stroke="rgba(0,0,0,0.022)" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.6"/>
+
+  <!-- Confetti dots -->
+  <circle cx="72"  cy="58"  r="7"  fill="#F59E0B" opacity="0.5"/>
+  <circle cx="148" cy="112" r="5"  fill="#EC4899" opacity="0.45"/>
+  <circle cx="40"  cy="220" r="6"  fill="#8B5CF6" opacity="0.4"/>
+  <circle cx="110" cy="440" r="8"  fill="#10B981" opacity="0.38"/>
+  <circle cx="55"  cy="560" r="5"  fill="#F97316" opacity="0.42"/>
+  <circle cx="1120" cy="70"  r="6"  fill="#3B82F6" opacity="0.42"/>
+  <circle cx="1170" cy="200" r="7"  fill="#EAB308" opacity="0.45"/>
+  <circle cx="1145" cy="350" r="5"  fill="#EC4899" opacity="0.4"/>
+  <circle cx="1100" cy="520" r="8"  fill="#F59E0B" opacity="0.38"/>
+  <rect x="180" y="42" width="10" height="18" rx="3" fill="#EF4444" opacity="0.38" transform="rotate(-30 185 51)"/>
+  <rect x="90"  y="380" width="8"  height="14" rx="2" fill="#8B5CF6" opacity="0.35" transform="rotate(20 94 387)"/>
+  <rect x="1050" cy="140" width="12" height="6"  rx="2" fill="#10B981" opacity="0.35" transform="rotate(45 1056 143)"/>
+  <rect x="1130" y="430" width="9"  height="16" rx="3" fill="#F97316" opacity="0.38" transform="rotate(-20 1134 438)"/>
+
+  <!-- Divider line left -->
+  <line x1="80" y1="315" x2="260" y2="315" stroke="rgba(217,119,6,0.3)" stroke-width="1.5"/>
+  <!-- Divider line right -->
+  <line x1="940" y1="315" x2="1120" y2="315" stroke="rgba(217,119,6,0.3)" stroke-width="1.5"/>
+
+  <!-- PRESENTS label -->
+  <text x="600" y="168" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="18" font-weight="700" fill="#D97706" text-anchor="middle" letter-spacing="5">PRESENTS</text>
+
+  <!-- Main title -->
+  <text x="600" y="298" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="148" font-weight="900" fill="url(#titleGrad)" text-anchor="middle" letter-spacing="-5">Daya's Motive</text>
+
+  <!-- Date pill -->
+  <rect x="340" y="360" width="220" height="42" rx="21" fill="rgba(217,119,6,0.09)" stroke="rgba(217,119,6,0.28)" stroke-width="1.5"/>
+  <text x="450" y="387" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="700" fill="#92400E" text-anchor="middle" letter-spacing="1.5">31ST OF MAY 2026</text>
+
+  <!-- Dot separator -->
+  <circle cx="590" cy="381" r="3" fill="rgba(0,0,0,0.18)"/>
+
+  <!-- Time pill -->
+  <rect x="610" y="360" width="160" height="42" rx="21" fill="rgba(0,0,0,0.04)" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+  <text x="690" y="387" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="600" fill="#44342A" text-anchor="middle" letter-spacing="0.5">4 PM – 8 PM</text>
+
+  <!-- Location -->
+  <text x="600" y="448" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="500" fill="#8C6E5A" text-anchor="middle">Ikorodu, Lagos</text>
+
+  <!-- Party emojis -->
+  <text x="480" y="510" font-size="36" text-anchor="middle">🎉</text>
+  <text x="600" y="510" font-size="36" text-anchor="middle">🥂</text>
+  <text x="720" y="510" font-size="36" text-anchor="middle">✨</text>
+
+  <!-- Branding footer -->
+  <text x="600" y="578" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13" font-weight="500" fill="rgba(0,0,0,0.28)" text-anchor="middle" letter-spacing="1">AirFns Softwares</text>
+
+  <!-- Sparkle decorators near title -->
+  <text x="295" y="265" font-size="22" fill="#F59E0B" opacity="0.7">✦</text>
+  <text x="875" y="240" font-size="16" fill="#F59E0B" opacity="0.6">✦</text>
+  <text x="305" y="320" font-size="12" fill="#F59E0B" opacity="0.5">✦</text>
+  <text x="890" y="300" font-size="18" fill="#F59E0B" opacity="0.65">✦</text>
+</svg>

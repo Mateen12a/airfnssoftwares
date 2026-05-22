@@ -22,7 +22,7 @@ function exportCSV(registrants: Registrant[]) {
 
 function exportTXT(registrants: Registrant[]) {
   const lines = [
-    "Daya Motive — Guest List",
+    "Daya's Motive — Guest List",
     `Exported: ${new Date().toLocaleString("en-GB")}`,
     `Total: ${registrants.length}`,
     "",
@@ -36,7 +36,7 @@ function exportWord(registrants: Registrant[]) {
     .map((r, i) => `<tr><td style="padding:8px 12px;border-bottom:1px solid #eee;color:#555;font-size:13px">${i + 1}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:500">${r.name}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;color:#888;font-size:13px">${formatDate(r.createdAt)}</td></tr>`)
     .join("");
 
-  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Daya Motive Guest List</title></head><body style="font-family:Arial,sans-serif;padding:32px"><h1 style="font-size:24px;margin-bottom:4px">Daya Motive</h1><p style="color:#888;margin-bottom:24px">Guest List &mdash; Exported ${new Date().toLocaleString("en-GB")} &mdash; ${registrants.length} guests</p><table style="border-collapse:collapse;width:100%"><thead><tr style="background:#f5f5f5"><th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;border-bottom:2px solid #ddd">#</th><th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;border-bottom:2px solid #ddd">Name</th><th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;border-bottom:2px solid #ddd">RSVP'd</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Daya's Motive Guest List</title></head><body style="font-family:Arial,sans-serif;padding:32px"><h1 style="font-size:24px;margin-bottom:4px">Daya's Motive</h1><p style="color:#888;margin-bottom:24px">Guest List &mdash; Exported ${new Date().toLocaleString("en-GB")} &mdash; ${registrants.length} guests</p><table style="border-collapse:collapse;width:100%"><thead><tr style="background:#f5f5f5"><th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;border-bottom:2px solid #ddd">#</th><th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;border-bottom:2px solid #ddd">Name</th><th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;border-bottom:2px solid #ddd">RSVP'd</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
   download(html, "daya-motive-guests.doc", "application/msword");
 }
 
@@ -118,7 +118,7 @@ export default function DayaAdmin() {
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>
 
             <img src="/assets/airfns-logo.png" alt="AirFns Softwares" className="da-login-logo" style={{ filter: "invert(1) hue-rotate(180deg)" }} />
-            <h1 className="da-login-title">Daya Motive</h1>
+            <h1 className="da-login-title">Daya's Motive</h1>
             <p className="da-login-sub">Guest list admin</p>
 
             <form onSubmit={handleLogin} className="da-login-form" noValidate>
@@ -143,7 +143,7 @@ export default function DayaAdmin() {
               <div className="da-header-left">
                 <img src="/assets/airfns-logo.png" alt="AirFns" className="da-dash-logo" style={{ filter: "invert(1) hue-rotate(180deg)" }} />
                 <div>
-                  <h1 className="da-dash-title">Daya Motive</h1>
+                  <h1 className="da-dash-title">Daya's Motive</h1>
                   <p className="da-dash-sub">Guest list</p>
                 </div>
               </div>

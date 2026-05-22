@@ -116,7 +116,42 @@ const frontendDist = path.resolve(
   "../../frontend/dist/public"
 );
 
+const DAYA_OG_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AirFns Softwares">
+<meta property="og:url" content="https://airfnssoftwares.com/daya-motive">
+<meta property="og:title" content="Daya's Motive — 31st of May 2026">
+<meta property="og:description" content="You're invited. AirFns Softwares presents Daya's Motive — a house party. 31st of May 2026 · 4 PM – 8 PM · Ikorodu, Lagos.">
+<meta property="og:image" content="https://airfnssoftwares.com/assets/og-daya-motive.svg">
+<meta property="og:image:type" content="image/svg+xml">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Daya's Motive — 31st of May 2026. A house party by AirFns Softwares.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Daya's Motive — 31st of May 2026">
+<meta name="twitter:description" content="You're invited. AirFns Softwares presents Daya's Motive — a house party. 31st of May 2026 · 4 PM – 8 PM · Ikorodu, Lagos.">
+<meta name="twitter:image" content="https://airfnssoftwares.com/assets/og-daya-motive.svg">
+<meta http-equiv="refresh" content="0;url=/daya-motive">
+</head>
+<body>Daya's Motive — You're invited. 31st of May 2026.</body>
+</html>`;
+
+const SOCIAL_BOT_RE = /facebookexternalhit|WhatsApp|Twitterbot|LinkedInBot|Slackbot|TelegramBot|Discordbot|Pinterest|Googlebot-Image/i;
+
 if (fs.existsSync(frontendDist)) {
+  app.get(["/daya-motive", "/daya-motive/"], (req, res, next) => {
+    const ua = req.get("User-Agent") ?? "";
+    if (SOCIAL_BOT_RE.test(ua)) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      return res.send(DAYA_OG_HTML);
+    }
+    next();
+  });
+
   app.use(express.static(frontendDist));
   app.get("*", (_req, res) => {
     res.sendFile(path.join(frontendDist, "index.html"));
