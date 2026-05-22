@@ -5,7 +5,13 @@ import { apiUrl } from "@/lib/api";
 const EXPIRY = new Date("2026-05-27T23:59:59Z");
 const EVENT_DATE = new Date("2026-05-31T15:00:00Z");
 
-type Step = "welcome" | "name" | "confirmed" | "duplicate" | "expired" | "loading";
+type Step =
+  | "welcome"
+  | "name"
+  | "confirmed"
+  | "duplicate"
+  | "expired"
+  | "loading";
 
 function isExpired(): boolean {
   return new Date() > EXPIRY;
@@ -81,7 +87,11 @@ function googleCalendarUrl(name: string): string {
 function AirFnsLogo() {
   return (
     <a href="/" className="dm-logo-link" aria-label="AirFns Softwares">
-      <img src="/assets/airfns-logo.png" alt="AirFns Softwares" className="dm-logo" />
+      <img
+        src="/assets/airfns-logo.png"
+        alt="AirFns Softwares"
+        className="dm-logo"
+      />
     </a>
   );
 }
@@ -89,19 +99,41 @@ function AirFnsLogo() {
 function CalendarButtons({ name }: { name: string }) {
   return (
     <div className="dm-cal-wrap">
-      <p className="dm-cal-label">Save the date</p>
+      <p className="dm-cal-label">SAVE THE DATE to your calendar</p>
       <div className="dm-cal-row">
-        <button onClick={() => downloadICS(name)} className="dm-cal-btn dm-cal-btn--ics">
-          <svg viewBox="0 0 24 24" fill="none" className="dm-cal-icon" aria-hidden="true">
+        <button
+          onClick={() => downloadICS(name)}
+          className="dm-cal-btn dm-cal-btn--ics"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            className="dm-cal-icon"
+            aria-hidden="true"
+          >
             <rect width="24" height="24" rx="5" fill="#1C1C1E" />
-            <path d="M8 2v3M16 2v3M3 9h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M8 2v3M16 2v3M3 9h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"
+              stroke="#fff"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
           Apple Calendar
         </button>
-        <a href={googleCalendarUrl(name)} target="_blank" rel="noopener noreferrer" className="dm-cal-btn dm-cal-btn--google">
+        <a
+          href={googleCalendarUrl(name)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="dm-cal-btn dm-cal-btn--google"
+        >
           <svg viewBox="0 0 24 24" className="dm-cal-icon" aria-hidden="true">
             <rect width="24" height="24" rx="5" fill="#4285F4" />
-            <path d="M12 11.5v2h2.5c-.1.7-.8 2-2.5 2-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7c.8 0 1.4.4 1.8.8l1.4-1.4C14.3 8.6 13.2 8 12 8c-2.2 0-4 1.8-4 4s1.8 4 4 4c2.3 0 3.8-1.6 3.8-3.9 0-.3 0-.5-.1-.6H12z" fill="#fff" />
+            <path
+              d="M12 11.5v2h2.5c-.1.7-.8 2-2.5 2-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7c.8 0 1.4.4 1.8.8l1.4-1.4C14.3 8.6 13.2 8 12 8c-2.2 0-4 1.8-4 4s1.8 4 4 4c2.3 0 3.8-1.6 3.8-3.9 0-.3 0-.5-.1-.6H12z"
+              fill="#fff"
+            />
           </svg>
           Google
         </a>
@@ -112,14 +144,31 @@ function CalendarButtons({ name }: { name: string }) {
 
 function AddressBlock() {
   return (
-    <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="dm-address-card">
+    <a
+      href={MAPS_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="dm-address-card"
+    >
       <span className="dm-address-icon">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" />
+          <circle cx="12" cy="10" r="3" />
         </svg>
       </span>
       <div className="dm-address-text">
-        <span className="dm-address-line">36, Abiodun Ogunleye, Solomade Estate</span>
+        <span className="dm-address-line">
+          36, Abiodun Ogunleye, Solomade Estate
+        </span>
         <span className="dm-address-sub">Ikorodu, Lagos · Open in Maps</span>
       </div>
       <span className="dm-address-arrow">↗</span>
@@ -159,12 +208,22 @@ export default function DayaInvite() {
         body: JSON.stringify({ name: trimmed }),
       });
       const data = await res.json();
-      if (res.status === 201) { setConfirmedName(data.name); setStep("confirmed"); }
-      else if (res.status === 409) { setDuplicateName(data.name); setStep("duplicate"); }
-      else if (res.status === 410) { setStep("expired"); }
-      else { setError(data.message ?? "Something went wrong. Please try again."); setStep("name"); }
+      if (res.status === 201) {
+        setConfirmedName(data.name);
+        setStep("confirmed");
+      } else if (res.status === 409) {
+        setDuplicateName(data.name);
+        setStep("duplicate");
+      } else if (res.status === 410) {
+        setStep("expired");
+      } else {
+        setError(data.message ?? "Something went wrong. Please try again.");
+        setStep("name");
+      }
     } catch {
-      setError("Something went wrong on our end. Please try again in a moment.");
+      setError(
+        "Something went wrong on our end. Please try again in a moment.",
+      );
       setStep("name");
     }
   }
@@ -178,26 +237,43 @@ export default function DayaInvite() {
       <div className="dm-bg-orb dm-bg-orb--left" />
       <div className="dm-bg-grid" />
       <div className="dm-confetti" aria-hidden="true">
-        <span className="dm-c dm-c--1" /><span className="dm-c dm-c--2" /><span className="dm-c dm-c--3" />
-        <span className="dm-c dm-c--4" /><span className="dm-c dm-c--5" /><span className="dm-c dm-c--6" />
-        <span className="dm-c dm-c--7" /><span className="dm-c dm-c--8" /><span className="dm-c dm-c--9" />
-        <span className="dm-c dm-c--10" /><span className="dm-c dm-c--11" /><span className="dm-c dm-c--12" />
+        <span className="dm-c dm-c--1" />
+        <span className="dm-c dm-c--2" />
+        <span className="dm-c dm-c--3" />
+        <span className="dm-c dm-c--4" />
+        <span className="dm-c dm-c--5" />
+        <span className="dm-c dm-c--6" />
+        <span className="dm-c dm-c--7" />
+        <span className="dm-c dm-c--8" />
+        <span className="dm-c dm-c--9" />
+        <span className="dm-c dm-c--10" />
+        <span className="dm-c dm-c--11" />
+        <span className="dm-c dm-c--12" />
       </div>
 
       <AnimatePresence mode="wait">
-
         {/* ── WELCOME ── */}
         {step === "welcome" && (
-          <motion.div key="welcome" className="dm-screen"
-            initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}>
-
-            <div className="dm-logo-wrap"><AirFnsLogo /></div>
+          <motion.div
+            key="welcome"
+            className="dm-screen"
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="dm-logo-wrap">
+              <AirFnsLogo />
+            </div>
 
             <div className="dm-hero">
               <span className="dm-presents-tag">presents</span>
               <div className="dm-title-wrap">
-                <h1 className="dm-title">Daya's<br />Motive</h1>
+                <h1 className="dm-title">
+                  Daya's
+                  <br />
+                  Motive
+                </h1>
                 <span className="dm-sparkle dm-sparkle--1">✦</span>
                 <span className="dm-sparkle dm-sparkle--2">✦</span>
                 <span className="dm-sparkle dm-sparkle--3">✦</span>
@@ -206,7 +282,9 @@ export default function DayaInvite() {
                 <span className="dm-sparkle dm-sparkle--6">✦</span>
               </div>
               <div className="dm-party-tags">
-                <span>🎉</span><span>🥂</span><span>✨</span>
+                <span>🎉</span>
+                <span>🥂</span>
+                <span>✨</span>
               </div>
             </div>
 
@@ -223,8 +301,8 @@ export default function DayaInvite() {
 
             <div className="dm-countdown">
               {[
-                { value: timeLeft.days,    label: "days" },
-                { value: timeLeft.hours,   label: "hrs" },
+                { value: timeLeft.days, label: "days" },
+                { value: timeLeft.hours, label: "hrs" },
                 { value: timeLeft.minutes, label: "min" },
                 { value: timeLeft.seconds, label: "sec" },
               ].map(({ value, label }) => (
@@ -235,12 +313,20 @@ export default function DayaInvite() {
               ))}
             </div>
 
-            <button className="dm-circle-btn" onClick={() => setStep("name")} aria-label="Claim your spot">
+            <button
+              className="dm-circle-btn"
+              onClick={() => setStep("name")}
+              aria-label="Claim your spot"
+            >
               <span className="dm-ring dm-ring--1" />
               <span className="dm-ring dm-ring--2" />
               <span className="dm-ring dm-ring--3" />
               <span className="dm-circle-inner">
-                <span className="dm-circle-label">Claim<br />Your Spot</span>
+                <span className="dm-circle-label">
+                  Claim
+                  <br />
+                  Your Spot
+                </span>
               </span>
             </button>
 
@@ -250,28 +336,51 @@ export default function DayaInvite() {
 
         {/* ── NAME / LOADING ── */}
         {(step === "name" || step === "loading") && (
-          <motion.div key="name" className="dm-screen"
-            initial={{ opacity: 0, x: 32 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}>
-
-            <div className="dm-logo-wrap"><AirFnsLogo /></div>
+          <motion.div
+            key="name"
+            className="dm-screen"
+            initial={{ opacity: 0, x: 32 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="dm-logo-wrap">
+              <AirFnsLogo />
+            </div>
 
             <div className="dm-name-hero">
               <div className="dm-name-visual">
                 <div className="dm-name-orb" />
                 <div className="dm-name-star-wrap">
-                  <svg className="dm-name-star" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M32 4 L35.5 28.5 L60 32 L35.5 35.5 L32 60 L28.5 35.5 L4 32 L28.5 28.5 Z" fill="url(#starGrad)" />
-                    <path d="M32 14 L33.8 30.2 L50 32 L33.8 33.8 L32 50 L30.2 33.8 L14 32 L30.2 30.2 Z" fill="url(#starGradInner)" opacity="0.5"/>
+                  <svg
+                    className="dm-name-star"
+                    viewBox="0 0 64 64"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M32 4 L35.5 28.5 L60 32 L35.5 35.5 L32 60 L28.5 35.5 L4 32 L28.5 28.5 Z"
+                      fill="url(#starGrad)"
+                    />
+                    <path
+                      d="M32 14 L33.8 30.2 L50 32 L33.8 33.8 L32 50 L30.2 33.8 L14 32 L30.2 30.2 Z"
+                      fill="url(#starGradInner)"
+                      opacity="0.5"
+                    />
                     <defs>
                       <radialGradient id="starGrad" cx="50%" cy="30%" r="60%">
-                        <stop offset="0%" stopColor="#FFFBEB"/>
-                        <stop offset="50%" stopColor="#F9E9C4"/>
-                        <stop offset="100%" stopColor="#F59E0B"/>
+                        <stop offset="0%" stopColor="#FFFBEB" />
+                        <stop offset="50%" stopColor="#F9E9C4" />
+                        <stop offset="100%" stopColor="#F59E0B" />
                       </radialGradient>
-                      <radialGradient id="starGradInner" cx="50%" cy="40%" r="60%">
-                        <stop offset="0%" stopColor="#FFFFFF"/>
-                        <stop offset="100%" stopColor="#FCD34D"/>
+                      <radialGradient
+                        id="starGradInner"
+                        cx="50%"
+                        cy="40%"
+                        r="60%"
+                      >
+                        <stop offset="0%" stopColor="#FFFFFF" />
+                        <stop offset="100%" stopColor="#FCD34D" />
                       </radialGradient>
                     </defs>
                   </svg>
@@ -283,8 +392,14 @@ export default function DayaInvite() {
                   <span className="dm-name-line-r" />
                 </div>
               </div>
-              <h2 className="dm-name-title">What should we<br />call you?</h2>
-              <p className="dm-name-sub">We'll add you to the guest list right away.</p>
+              <h2 className="dm-name-title">
+                What should we
+                <br />
+                call you?
+              </h2>
+              <p className="dm-name-sub">
+                We'll add you to the guest list right away.
+              </p>
             </div>
 
             <form className="dm-form" onSubmit={handleSubmit} noValidate>
@@ -295,7 +410,10 @@ export default function DayaInvite() {
                   className="dm-input"
                   placeholder="Your name"
                   value={name}
-                  onChange={(e) => { setName(e.target.value); setError(""); }}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setError("");
+                  }}
                   disabled={step === "loading"}
                   maxLength={100}
                   autoComplete="name"
@@ -303,7 +421,9 @@ export default function DayaInvite() {
                 />
               </div>
 
-              <label className={`dm-consent-label${mediaConsent ? " dm-consent-label--checked" : ""}`}>
+              <label
+                className={`dm-consent-label${mediaConsent ? " dm-consent-label--checked" : ""}`}
+              >
                 <span className="dm-consent-box">
                   <input
                     type="checkbox"
@@ -315,29 +435,55 @@ export default function DayaInvite() {
                   <span className="dm-consent-tick" aria-hidden="true">
                     {mediaConsent && (
                       <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
-                        <path d="M1 4L4 7.5L10 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path
+                          d="M1 4L4 7.5L10 1"
+                          stroke="white"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     )}
                   </span>
                 </span>
                 <span className="dm-consent-text">
-                  I consent to photos and videos being taken at the event. It's going to be a good time.
+                  I consent to photos and videos being taken at the event. It's
+                  going to be a good time.
                 </span>
               </label>
 
               {error && (
-                <motion.p className="dm-error" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}>
+                <motion.p
+                  className="dm-error"
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
                   {error}
                 </motion.p>
               )}
 
-              <button type="submit" className="dm-submit" disabled={!name.trim() || !mediaConsent || step === "loading"}>
-                {step === "loading" ? <span className="dm-spinner" /> : "Secure My Spot"}
+              <button
+                type="submit"
+                className="dm-submit"
+                disabled={!name.trim() || !mediaConsent || step === "loading"}
+              >
+                {step === "loading" ? (
+                  <span className="dm-spinner" />
+                ) : (
+                  "Secure My Spot"
+                )}
                 {step !== "loading" && <span className="dm-arrow">→</span>}
               </button>
             </form>
 
-            <button className="dm-back" onClick={() => { setStep("welcome"); setError(""); setMediaConsent(false); }}>
+            <button
+              className="dm-back"
+              onClick={() => {
+                setStep("welcome");
+                setError("");
+                setMediaConsent(false);
+              }}
+            >
               ← Back
             </button>
           </motion.div>
@@ -345,50 +491,77 @@ export default function DayaInvite() {
 
         {/* ── CONFIRMED ── */}
         {step === "confirmed" && (
-          <motion.div key="confirmed" className="dm-screen"
-            initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
-
+          <motion.div
+            key="confirmed"
+            className="dm-screen"
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="dm-confirmed-glow" />
 
-            <motion.div className="dm-check-badge"
-              initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.1, type: "spring", stiffness: 280, damping: 18 }}>
+            <motion.div
+              className="dm-check-badge"
+              initial={{ scale: 0.4, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{
+                delay: 0.1,
+                type: "spring",
+                stiffness: 280,
+                damping: 18,
+              }}
+            >
               ✓
             </motion.div>
 
-            <motion.div className="dm-confirmed-text"
-              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.45 }}>
+            <motion.div
+              className="dm-confirmed-text"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.45 }}
+            >
               <h2 className="dm-confirmed-title">
                 You're in, {confirmedName.split(" ")[0]}! 🎉
               </h2>
               <p className="dm-confirmed-sub">
-                Your spot at Daya's Motive is confirmed.<br />
+                Your spot at Daya's Motive is confirmed.
+                <br />
                 We cannot wait to see you on <strong>31st of May</strong>.
               </p>
             </motion.div>
 
-            <motion.div style={{ width: "100%" }}
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.4 }}>
+            <motion.div
+              style={{ width: "100%" }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.4 }}
+            >
               <CalendarButtons name={confirmedName} />
             </motion.div>
 
-            <motion.div style={{ width: "100%", marginTop: "12px" }}
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.45, duration: 0.4 }}>
+            <motion.div
+              style={{ width: "100%", marginTop: "12px" }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45, duration: 0.4 }}
+            >
               <AddressBlock />
             </motion.div>
 
-            <motion.div className="dm-drinks-card"
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.55, duration: 0.4 }}>
+            <motion.div
+              className="dm-drinks-card"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.55, duration: 0.4 }}
+            >
               <span className="dm-drinks-emoji">🥂</span>
               <div>
                 <p className="dm-drinks-title">Feel free to bring a drink</p>
                 <p className="dm-drinks-body">
-                  There will be drinks at the event. If you'd like to bring something of your own to enjoy or share, you're welcome to. Please drink responsibly.
+                  There will be drinks at the event. If you'd like to bring
+                  something of your own to enjoy or share, you're welcome to.
+                  Please drink responsibly.
                 </p>
               </div>
             </motion.div>
@@ -397,18 +570,24 @@ export default function DayaInvite() {
 
         {/* ── DUPLICATE ── */}
         {step === "duplicate" && (
-          <motion.div key="duplicate" className="dm-screen"
-            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            transition={{ duration: 0.45 }}>
-
+          <motion.div
+            key="duplicate"
+            className="dm-screen"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.45 }}
+          >
             <div className="dm-check-badge dm-check-badge--amber">✓</div>
 
             <div className="dm-confirmed-text">
               <h2 className="dm-confirmed-title">
-                Already on the list{duplicateName ? `, ${duplicateName.split(" ")[0]}` : ""}! 🎊
+                Already on the list
+                {duplicateName ? `, ${duplicateName.split(" ")[0]}` : ""}! 🎊
               </h2>
               <p className="dm-confirmed-sub">
-                Your spot at Daya's Motive is secured.<br />
+                Your spot at Daya's Motive is secured.
+                <br />
                 See you on <strong>31st of May 2026</strong>.
               </p>
             </div>
@@ -424,7 +603,9 @@ export default function DayaInvite() {
               <div>
                 <p className="dm-drinks-title">Feel free to bring a drink</p>
                 <p className="dm-drinks-body">
-                  There will be drinks at the event. If you'd like to bring something of your own to enjoy or share, you're welcome to. Please drink responsibly.
+                  There will be drinks at the event. If you'd like to bring
+                  something of your own to enjoy or share, you're welcome to.
+                  Please drink responsibly.
                 </p>
               </div>
             </div>
@@ -433,20 +614,28 @@ export default function DayaInvite() {
 
         {/* ── EXPIRED ── */}
         {step === "expired" && (
-          <motion.div key="expired" className="dm-screen"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-
-            <div className="dm-logo-wrap"><AirFnsLogo /></div>
+          <motion.div
+            key="expired"
+            className="dm-screen"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="dm-logo-wrap">
+              <AirFnsLogo />
+            </div>
             <div className="dm-expired-icon">🕐</div>
             <h2 className="dm-expired-title">RSVP Closed</h2>
             <p className="dm-expired-sub">
-              The invite link for Daya's Motive has expired.<br />
+              The invite link for Daya's Motive has expired.
+              <br />
               RSVPs closed on <strong>27 May 2026</strong>.
             </p>
-            <p className="dm-expired-footer">Reach out to your host directly if you have questions.</p>
+            <p className="dm-expired-footer">
+              Reach out to your host directly if you have questions.
+            </p>
           </motion.div>
         )}
-
       </AnimatePresence>
 
       <style>{`
