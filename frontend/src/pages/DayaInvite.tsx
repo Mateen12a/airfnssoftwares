@@ -624,15 +624,11 @@ export default function DayaInvite() {
             <div className="dm-logo-wrap">
               <AirFnsLogo />
             </div>
-            <div className="dm-expired-icon">🕐</div>
             <h2 className="dm-expired-title">RSVP Closed</h2>
             <p className="dm-expired-sub">
               The invite link for Daya's Motive has expired.
               <br />
-              RSVPs closed on <strong>27 May 2026</strong>.
-            </p>
-            <p className="dm-expired-footer">
-              Reach out to your host directly if you have questions.
+              RSVPs closed.
             </p>
           </motion.div>
         )}
