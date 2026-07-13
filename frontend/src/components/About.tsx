@@ -83,7 +83,7 @@ export default function About() {
             <div className="bg-[#111111] border border-[#1F1F1F] px-5 py-4 flex items-center justify-between">
               <div>
                 <p className="text-[#4B5563] font-mono text-[10px] tracking-wider uppercase mb-1">Reg. No.</p>
-                <p className="text-[#9CA3AF] font-mono text-sm">6991159</p>
+                <p className="text-[#9CA3AF] font-mono text-sm">9553492</p>
               </div>
               <div className="text-right">
                 <p className="text-[#4B5563] font-mono text-[10px] tracking-wider uppercase mb-1">Status</p>

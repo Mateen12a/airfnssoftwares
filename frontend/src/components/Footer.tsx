@@ -68,7 +68,7 @@ export default function Footer() {
             </p>
           </div>
           <p className="text-[#4B5563] text-[10px] font-mono tracking-wider">
-            Reg.&nbsp;No.&nbsp;6991159
+            Reg.&nbsp;No.&nbsp;9553492
           </p>
         </div>
       </div>
